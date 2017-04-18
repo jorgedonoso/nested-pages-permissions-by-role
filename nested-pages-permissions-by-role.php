@@ -6,12 +6,14 @@ Version: 0.2.25
 Author: Jorge Donoso
 */
 
+namespace nppbr_space;
+
 require('helpers.php');
 
 /*
 * Add column headers for direct and absolute parents.
 */
-add_filter('manage_pages_columns', 'nested_pages_permissions_by_role_column_header', 5);
+add_filter('manage_pages_columns', 'nppbr_space\nested_pages_permissions_by_role_column_header', 5);
 
 function nested_pages_permissions_by_role_column_header($defaults){
     $defaults['nested_pages_permissions_by_role_parent_page'] = __('Direct Parent');
@@ -22,7 +24,7 @@ function nested_pages_permissions_by_role_column_header($defaults){
 /*
 * Populate content cells.
 */
-add_action('manage_pages_custom_column', 'nested_pages_permissions_by_role_column_content', 5, 2);
+add_action('manage_pages_custom_column', 'nppbr_space\nested_pages_permissions_by_role_column_content', 5, 2);
 
 function nested_pages_permissions_by_role_column_content($column_name, $id){
 	
@@ -44,7 +46,7 @@ function nested_pages_permissions_by_role_column_content($column_name, $id){
 /*
 * Make columns sortable
 */
-add_filter('manage_edit-page_sortable_columns','nested_pages_permissions_by_role_sortable_columns');
+add_filter('manage_edit-page_sortable_columns','nppbr_space\nested_pages_permissions_by_role_sortable_columns');
 
 function nested_pages_permissions_by_role_sortable_columns($columns){
 	$columns['nested_pages_permissions_by_role_parent_page'] = 'parent_page';
@@ -52,7 +54,7 @@ function nested_pages_permissions_by_role_sortable_columns($columns){
 	return $columns;
 }
 
-add_action('pre_get_posts', 'nppbr_orderby');
+add_action('pre_get_posts', 'nppbr_space\nppbr_orderby');
 function nppbr_orderby($query) {
 
 	if($query->get("post_type")=='page'){
@@ -76,7 +78,7 @@ function nppbr_orderby($query) {
 /*
 * Activation hook.
 */
-register_activation_hook( __FILE__, 'nppbr_activation' );
+register_activation_hook( __FILE__, 'nppbr_space\nppbr_activation' );
 function nppbr_activation() {
 	
 	$pages = get_pages(); 
@@ -90,7 +92,7 @@ function nppbr_activation() {
 /*
 * Deactivation hook.
 */
-register_deactivation_hook( __FILE__, 'nppbr_deactivation' );
+register_deactivation_hook( __FILE__, 'nppbr_space\nppbr_deactivation' );
 
 function nppbr_deactivation(){
 	$pages = get_pages(); 
@@ -103,7 +105,7 @@ function nppbr_deactivation(){
 /*
 * Update the meta on create or update.
 */
-add_action('save_post_page', 'nppbr_save_post_page' );
+add_action('save_post_page', 'nppbr_space\nppbr_save_post_page' );
 
 function nppbr_save_post_page($id){
 	update_parent_meta($id);
@@ -113,7 +115,7 @@ function nppbr_save_post_page($id){
 /*
 * Settings page to manage roles' relationships.
 */
-add_action('admin_menu', 'nppbr_settings' );
+add_action('admin_menu', 'nppbr_space\nppbr_settings' );
 
 function nppbr_settings() {
 	add_options_page(
@@ -121,7 +123,7 @@ function nppbr_settings() {
 		'Nested Pages Permissions',
 		'manage_options',
 		'Nested Pages Permissions',
-		'nppbr_settings_page');
+		'nppbr_space\nppbr_settings_page');
 }
 
 function nppbr_settings_page() {

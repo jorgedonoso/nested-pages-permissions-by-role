@@ -1,5 +1,7 @@
 <?php
 
+namespace nppbr_space;
+
 /*
 * Returns the absolute parent id for a post id.
 */
