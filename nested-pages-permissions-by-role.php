@@ -109,4 +109,66 @@ function nppbr_save_post_page($id){
 	update_parent_meta($id);
 	update_absolute_parent_meta($id);
 }
+
+/*
+* Settings page to manage roles' relationships.
+*/
+add_action('admin_menu', 'nppbr_settings' );
+
+function nppbr_settings() {
+	add_options_page(
+		'Nested Pages Permissions',
+		'Nested Pages Permissions',
+		'manage_options',
+		'Nested Pages Permissions',
+		'nppbr_settings_page');
+}
+
+function nppbr_settings_page() {
+	
+	global $wp_roles;
+    $all_roles = $wp_roles->roles;
+    
+	?> 
+		<h1>Nested Pages Permissions by Role</h1>
+		<h2>Settings</h2>
+
+		<form method="post" action="options.php">
+
+            <?php 
+            	wp_nonce_field('update-options'); 
+	            $roles_array = [];
+
+	            foreach($all_roles as $role){
+	    			print "<p><strong>".$role['name']."</strong></p>";
+	    			nppbr_roles_dropdown($role['name']);
+	    			array_push($roles_array, 'nppbr_'.sanitize_title_with_dashes($role['name']));
+	    		}
+
+	    		$roles_for_hidden_input = implode(",",$roles_array);
+    		?>
+
+            <p><input type="submit" name="Submit" value="Save" /></p>
+            <input type="hidden" name="action" value="update" />
+            <input type="hidden" name="page_options" value="<?php print $roles_for_hidden_input ?>" />
+        </form>
+
+	<?php
+
+}
+
+function nppbr_roles_dropdown($role)
+{
+
+	$page_ids=get_all_page_ids();
+	$sanitized_role = sanitize_title_with_dashes($role);
+
+	print "<select name='nppbr_$sanitized_role'><option>-</option>";
+	foreach($page_ids as $page)
+	{
+		print "<option value='$page' ".selected(get_option("nppbr_$sanitized_role"), $page).'>'.get_the_title($page).'</option>';
+	}
+	echo '</select>';
+
+}
 ?>
