@@ -173,4 +173,35 @@ function nppbr_roles_dropdown($role)
 	echo '</select>';
 
 }
+
+/*
+* Revoke edit access if the page is not a nested page.
+*/
+add_filter('map_meta_cap','nppbr_space\custom_meta_cap',10,4);
+
+function custom_meta_cap($caps, $cap, $user_id, $args){
+
+	//if it's not edit_post, then move on.
+    if ($cap!='edit_post'){
+        return $caps;
+    }
+
+    $post_id = $args[0];
+
+    if (!nppbr_user_can_edit($user_id, $post_id)){
+        return ['do_not_allow'];
+    }
+
+    return ['exist'];
+
+}
+
+/*
+* Loop thru the pages until 
+*/
+function nppbr_user_can_edit($user_id, $page_id){
+
+	//todo
+	return false;
+}
 ?>
