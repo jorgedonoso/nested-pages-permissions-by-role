@@ -201,19 +201,26 @@ function custom_meta_cap($caps, $cap, $user_id, $args){
 */
 function nppbr_user_can_edit($user_id, $page_id){
 
-	//Find parent ID.
-	$current_roles = wp_get_current_user()->roles;
-	$sanitized_role = sanitize_title_with_dashes($current_roles[0]);
-	$nested_pages_allowed = get_option("nppbr_$sanitized_role");
+	$page_found = false;
 
-	//Find children IDs.
-	$my_wp_query = new \WP_Query();
-	$all_wp_pages = $my_wp_query->query(array('post_type' => 'page', 'posts_per_page' => '-1'));
-	$children = get_page_children($nested_pages_allowed, $all_wp_pages);
-	$children_IDs = wp_list_pluck($children,'ID');
+	if(is_user_logged_in()){
 
-	//Check if current page is an "editable" child.
-	$page_found = in_array($page_id, $children_IDs);
+		//Find parent ID.
+		$current_roles = wp_get_current_user()->roles;
+		$sanitized_role = sanitize_title_with_dashes($current_roles[0]);
+		$nested_pages_allowed = get_option("nppbr_$sanitized_role");
+
+		//Find children IDs.
+		$my_wp_query = new \WP_Query();
+		$all_wp_pages = $my_wp_query->query(array('post_type' => 'page', 'posts_per_page' => '-1'));
+		$children = get_page_children($nested_pages_allowed, $all_wp_pages);
+		$children_IDs = wp_list_pluck($children,'ID');
+
+		//Check if current page is an "editable" child.
+		$page_found = in_array($page_id, $children_IDs);
+		
+	}
+
     return $page_found;
 }
 ?>
