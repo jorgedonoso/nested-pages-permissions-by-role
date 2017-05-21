@@ -188,7 +188,9 @@ function custom_meta_cap($caps, $cap, $user_id, $args){
 
     $post_id = $args[0];
 
-    if (!nppbr_user_can_edit($user_id, $post_id)){
+    if (!nppbr_user_can_edit($user_id, $post_id)
+    	&& get_post_type($args[0]) == 'page'
+    	&& count($args) == 1){
         return ['do_not_allow'];
     }
 
